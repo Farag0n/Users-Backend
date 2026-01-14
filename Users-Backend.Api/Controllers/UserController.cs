@@ -8,7 +8,7 @@ namespace Users_Backend.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize] // Por defecto, todo requiere estar logueado
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -22,7 +22,7 @@ public class UserController : ControllerBase
 
     // GET: api/User
     [HttpGet]
-    [Authorize(Roles = "Admin")] // Solo admin ve el listado completo
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAll()
     {
         try 
@@ -45,7 +45,7 @@ public class UserController : ControllerBase
         var currentUserId = GetCurrentUserId();
         if (!User.IsInRole("Admin") && currentUserId != id)
         {
-            return Forbid(); // 403: No tienes permiso para ver este ID
+            return Forbid();//TODO ponerle un authorize
         }
 
         try
@@ -69,7 +69,6 @@ public class UserController : ControllerBase
         try
         {
             var user = await _userService.GetUserByUserNameAsync(username);
-            // Nota: Tu servicio lanza excepción si no encuentra, así que el catch lo maneja
             return Ok(user);
         }
         catch (KeyNotFoundException)
@@ -166,6 +165,25 @@ public class UserController : ControllerBase
         try
         {
             var deletedUser = await _userService.DeleteUserAsync(id);
+            if (deletedUser == null) return NotFound(new { Message = "Usuario no encontrado" });
+
+            return Ok(new { Message = "Usuario eliminado correctamente", User = deletedUser });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error eliminando usuario {Id}", id);
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+    
+    // DELETE: api/User/{id}
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> SoftDelete(Guid id)
+    {
+        try
+        {
+            var deletedUser = await _userService.SoftDeleteUserAsync(id);
             if (deletedUser == null) return NotFound(new { Message = "Usuario no encontrado" });
 
             return Ok(new { Message = "Usuario eliminado correctamente", User = deletedUser });
