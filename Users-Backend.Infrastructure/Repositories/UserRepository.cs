@@ -7,12 +7,11 @@ using Users_Backend.Infrastructure.Data;
 
 namespace Users_Backend.Infrastructure.Repositories;
 
-//logica de como intetactua la db con la entidd
 public class UserRepository : IUserRepository
 {
-    //inyeccion de dependencias por constructor
     private readonly AppDbContext _context;
     private readonly ILogger<UserRepository> _logger;
+    
     public UserRepository(AppDbContext context, ILogger<UserRepository> logger)
     {
         _context = context;
@@ -23,6 +22,7 @@ public class UserRepository : IUserRepository
     {
         try
         {
+            //TODO buscar una forma de generar logs con logger para cuando todo salga bien
             return await _context.Users.ToListAsync();
         }
         catch (Exception e)
@@ -34,68 +34,122 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByIdAsync(Guid userId)
     {
-        return await _context.Users
-            .FirstOrDefaultAsync(u => u.Id == userId);
+        try
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al obtener el usuario con ID {UserId}", userId);
+            throw;
+        }
     }
 
     public async Task<User?> GetUserByUserNameAsync(string userName)
     {
-        return await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == userName);
+        try
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.UserName == userName);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al obtener el usuario con UserName {UserName}", userName);
+            throw;
+        }
     }
 
     public async Task<User?> GetUserByEmailAsync(Email email)
     {
-        return await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == email);
+        try
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al obtener el usuario con Email {Email}", email);
+            throw;
+        }
     }
 
     public async Task<User?> CreateUserAsync(User user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        return user;
+        try
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al crear el usuario con ID {UserId}", user.Id);
+            throw;
+        }
     }
 
     public async Task<User?> UpdateUserAsync(User user, Guid userId)
     {
-        var existing = await _context.Users.FindAsync(user.Id);
-
-        if (existing != null)
+        try
         {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-            return user;
+            var existing = await _context.Users.FindAsync(user.Id);
+
+            if (existing != null)
+            {
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            return null;
         }
-        return null;
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al actualizar el usuario con ID {UserId}", userId);
+            throw;
+        }
     }
 
     public async Task<User?> SoftDeleteUserAsync(Guid userId)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
-
-        if (user != null)
+        try
         {
-            // Soft delete
-            user.SoftDelete();
-            
-            await _context.SaveChangesAsync();
-            return user;
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+
+            if (user != null)
+            {
+                user.SoftDelete();
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            return null;
         }
-        return null;
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al realizar soft delete del usuario con ID {UserId}", userId);
+            throw;
+        }
     }
 
-    public async Task<User> DeleteUserAsync(Guid userId)
+    public async Task<User?> DeleteUserAsync(Guid userId)
     {
-        var user = await _context.Users.FindAsync(userId);
-
-        if (user != null)
+        try
         {
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return user;  
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return user;  
+            }
+            return null;
         }
-        return null;
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al eliminar el usuario con ID {UserId}", userId);
+            throw;
+        }
     }
 }
