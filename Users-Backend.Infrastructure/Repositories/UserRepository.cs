@@ -17,6 +17,7 @@ public class UserRepository : IUserRepository
         _context = context;
         _logger = logger;
     }
+    //TODO mejorar los logs para cuando algo esta pasando
 
     public async Task<IEnumerable<User>> GetAllAsync()
     {

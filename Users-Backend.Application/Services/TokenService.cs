@@ -15,6 +15,8 @@ public class TokenService
     {
         _configuration = configuration;
     }
+    
+    //TODO agregar logs de informacion para aprender del flufo de informacion
 
     // Generete Access Token (JWT)
     public string GenerateAccessToken(Guid userId, string email, string role)
