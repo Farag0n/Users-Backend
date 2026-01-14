@@ -12,5 +12,5 @@ public interface IUserRepository
     Task<User?> CreateUserAsync(User user);
     Task<User?> UpdateUserAsync(User user, Guid userId);
     Task<User?> SoftDeleteUserAsync(Guid userId);
-    Task<User> DeleteUserAsync(Guid userId);
+    Task<User?> DeleteUserAsync(Guid userId);
 }
