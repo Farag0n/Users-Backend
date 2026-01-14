@@ -177,7 +177,7 @@ public class UserController : ControllerBase
     }
     
     // DELETE: api/User/{id}
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("SoftDete/{id:guid}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> SoftDelete(Guid id)
     {
