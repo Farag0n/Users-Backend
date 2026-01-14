@@ -9,7 +9,7 @@ public interface IUserService
     Task<UserResponseDto?> GetUserByEmailAsync(string emailStr);
     Task<IEnumerable<UserResponseDto>> GetAllUsersAsync();
     Task<UserResponseDto?> UpdateUserAsync(UserUpdateDto updateUserDto);
-    Task<UserResponseDto> GetUserByUserNameAsync(string userName);
+    Task<UserResponseDto?> GetUserByUserNameAsync(string userName);
     Task<UserResponseDto?> SoftDeleteUserAsync(Guid id);
     Task<UserResponseDto?> DeleteUserAsync(Guid id);
     Task<UserResponseDto?> CreateUserAsync(UserRegisterDto registerDto);

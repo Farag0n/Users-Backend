@@ -27,6 +27,7 @@ public class UserService : IUserService
         _logger = logger;
     }
 
+    //TODO Revisar todos los logs
     public async Task<UserResponseDto?> GetUserByIdAsync(Guid id)
     {
         try
@@ -76,6 +77,7 @@ public class UserService : IUserService
         }
     }
 
+    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
     public async Task<UserResponseDto?> CreateUserAsync(UserRegisterDto userCreateDto)
     {
         try
@@ -112,6 +114,7 @@ public class UserService : IUserService
         }
     }
 
+    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
     public async Task<UserResponseDto?> UpdateUserAsync(UserUpdateDto userUpdateDto)
     {
         try
@@ -186,7 +189,7 @@ public class UserService : IUserService
         }
     }
     
-    public async Task<UserResponseDto> GetUserByUserNameAsync(string userName)
+    public async Task<UserResponseDto?> GetUserByUserNameAsync(string userName)
     {
         try
         {
@@ -209,6 +212,7 @@ public class UserService : IUserService
         }
     }
 
+    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
     public async Task<(string AccessToken, string RefreshToken)> AuthenticateAsync(UserLoginDto loginDto)
     {
         try
@@ -240,9 +244,9 @@ public class UserService : IUserService
         }
     }
 
+    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
     public async Task<(string AccessToken, string RefreshToken)> RegisterAsync(UserRegisterDto registerDto)
     {
-        
         try 
         {
             var emailVo = new Email(registerDto.Email);
@@ -277,6 +281,7 @@ public class UserService : IUserService
         }
     }
 
+    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
     public async Task<(string NewAccessToken, string NewRefreshToken)> RefreshTokenAsync(string accessToken, string refreshToken)
     {
         try
@@ -296,6 +301,7 @@ public class UserService : IUserService
             {
                 // Si falla el GUID intentamos por email (fallback de tu lógica original)
                 // Pero recuerda convertir el string a Email VO
+                //TODO refactorizar esto para que sea mas estandar
                 try {
                     var emailVo = new Email(userIdClaim);
                     user = await _userRepository.GetUserByEmailAsync(emailVo);
