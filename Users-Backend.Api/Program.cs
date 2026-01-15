@@ -96,6 +96,7 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local
             .WithTitle("Real Estate API")
             .WithTheme(ScalarTheme.Purple)
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+            //.WithHideNavigationPath();
     });
 }
 
