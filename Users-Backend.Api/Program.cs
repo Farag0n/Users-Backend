@@ -3,7 +3,7 @@ using Users_Backend.Application.Interfaces;
 using Users_Backend.Application.Services;
 using Users_Backend.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Scalar.AspNetCore;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Users_Backend.Infrastructure.Extensions;
@@ -49,9 +49,44 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// ===================== Controllers and Scalar =====================
+// ===================== Controllers and Swagger =====================
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new()
+    {
+        Title = "Real Estate API",
+        Version = "v1"
+    });
+
+    // JWT en Swagger
+    options.AddSecurityDefinition("Bearer", new()
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Escribe SOLO el token JWT (sin 'Bearer ')"
+    });
+
+    options.AddSecurityRequirement(new()
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // ===================== CORS =====================
 var corsPolicyName = "AllowAll";
@@ -88,15 +123,11 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
 {
-    app.MapOpenApi();
-
-    app.MapScalarApiReference(options =>
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
     {
-        options
-            .WithTitle("Real Estate API")
-            .WithTheme(ScalarTheme.Purple)
-            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
-            //.WithHideNavigationPath();
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Real Estate API v1");
+        options.RoutePrefix = string.Empty; // Swagger en /
     });
 }
 

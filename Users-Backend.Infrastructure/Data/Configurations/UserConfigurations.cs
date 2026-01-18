@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders; //permite configurar entidades usando el patron Fluent API(tovia estoy aprendiendo que es esto=
+using Microsoft.EntityFrameworkCore.Metadata.Builders; //permite configurar entidades usando el patron Fluent API(tovia estoy aprendiendo que es esto)
 using Users_Backend.Domain.Entities;
 using Users_Backend.Domain.Enums;
 using Users_Backend.Domain.ValueObjects;
@@ -51,34 +51,35 @@ public class UserConfigurations :  IEntityTypeConfiguration<User>
             .HasMaxLength(500);
         
         //datos inicales (seed Data)
+        //Se debe inciar una pasword hasheada
         //Se inseta informacion de testeo al crear la db
         //Es muy util en desarrollo pero no es correcto en produccion
-        builder.HasData(
-        new
-        {
-            Id = Guid.Parse("d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a"),
-            Name = "Test",
-            LastName = "Admin",
-            Email = new Email("admin@qwe.com"),
-            UserName = "Admin",
-            PasswordHash = "123",
-            UserRole = UserRole.Admin,
-            CreateAt = DateTime.UtcNow,
-            IsDeleted = false,
-            RefreshTokenExpiresDate = DateTime.MinValue
-        },
-        new
-        {
-            Id = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
-            Name = "Test",
-            LastName = "User",
-            Email = new Email("user@qwe.com"),
-            UserName = "user",
-            PasswordHash = "123",
-            UserRole = UserRole.User,
-            CreateAt = DateTime.UtcNow,
-            IsDeleted = false,
-            RefreshTokenExpiresDate = DateTime.MinValue
-        });
+        // builder.HasData(
+        // new
+        // {
+        //     Id = Guid.Parse("d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a"),
+        //     Name = "Test",
+        //     LastName = "Admin",
+        //     Email = new Email("admin@qwe.com"),
+        //     UserName = "Admin",
+        //     PasswordHash = "123",
+        //     UserRole = UserRole.Admin,
+        //     CreateAt = DateTime.UtcNow,
+        //     IsDeleted = false,
+        //     RefreshTokenExpiresDate = DateTime.MinValue
+        // },
+        // new
+        // {
+        //     Id = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
+        //     Name = "Test",
+        //     LastName = "User",
+        //     Email = new Email("user@qwe.com"),
+        //     UserName = "user",
+        //     PasswordHash = "123",
+        //     UserRole = UserRole.User,
+        //     CreateAt = DateTime.UtcNow,
+        //     IsDeleted = false,
+        //     RefreshTokenExpiresDate = DateTime.MinValue
+        // });
     }
 }
