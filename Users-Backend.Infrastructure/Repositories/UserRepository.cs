@@ -17,13 +17,12 @@ public class UserRepository : IUserRepository
         _context = context;
         _logger = logger;
     }
-    //TODO mejorar los logs para cuando algo esta pasando
+    //TODO mejorar los logs para cuando algo bueno o malo este pasando
 
     public async Task<IEnumerable<User>> GetAllAsync()
     {
         try
         {
-            //TODO buscar una forma de generar logs con logger para cuando todo salga bien
             return await _context.Users.ToListAsync();
         }
         catch (Exception e)
@@ -71,6 +70,21 @@ public class UserRepository : IUserRepository
         catch (Exception e)
         {
             _logger.LogError(e, "Error al obtener el usuario con Email {Email}", email);
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<User>> GetDeletedUsersAsync()
+    {
+        try
+        {
+            return await _context.Users
+                .Where(u => u.IsDeleted == true)
+                .ToListAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al obtener los usuarios eliminados");
             throw;
         }
     }

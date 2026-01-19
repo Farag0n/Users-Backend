@@ -8,8 +8,9 @@ public interface IUserService
     Task<UserResponseDto?> GetUserByIdAsync(Guid id);
     Task<UserResponseDto?> GetUserByEmailAsync(string emailStr);
     Task<IEnumerable<UserResponseDto>> GetAllUsersAsync();
-    Task<UserResponseDto?> UpdateUserAsync(UserUpdateDto updateUserDto);
+    Task<UserResponseDto?> UpdateUserAsync(Guid userId, UserUpdateDto updateUserDto);
     Task<UserResponseDto?> GetUserByUserNameAsync(string userName);
+    Task<IEnumerable<UserResponseDto>> GetDeletedUsersAsync();
     Task<UserResponseDto?> SoftDeleteUserAsync(Guid id);
     Task<UserResponseDto?> DeleteUserAsync(Guid id);
     Task<UserResponseDto?> CreateUserAsync(UserRegisterDto registerDto);

@@ -9,6 +9,7 @@ public interface IUserRepository
     Task<User?> GetUserByIdAsync(Guid userId);
     Task<User?> GetUserByUserNameAsync(string userName);
     Task<User?> GetUserByEmailAsync(Email email);
+    Task<IEnumerable<User>> GetDeletedUsersAsync();
     Task<User?> CreateUserAsync(User user);
     Task<User?> UpdateUserAsync(User user, Guid userId);
     Task<User?> SoftDeleteUserAsync(Guid userId);

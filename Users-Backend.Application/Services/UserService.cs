@@ -76,8 +76,7 @@ public class UserService : IUserService
             throw;
         }
     }
-
-    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
+    
     public async Task<UserResponseDto?> CreateUserAsync(UserRegisterDto userCreateDto)
     {
         try
@@ -113,50 +112,68 @@ public class UserService : IUserService
             throw;
         }
     }
-
-    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
-    public async Task<UserResponseDto?> UpdateUserAsync(UserUpdateDto userUpdateDto)
+    
+    public async Task<UserResponseDto?> UpdateUserAsync(Guid userId, UserUpdateDto userUpdateDto)
     {
         try
         {
-            if (!Guid.TryParse(userUpdateDto.Id.ToString(), out Guid userId))
-                 throw new ArgumentException("ID inválido");
-
             _logger.LogInformation("Actualizando usuario ID: {Id}", userId);
-            
+        
             var existingUser = await _userRepository.GetUserByIdAsync(userId);
             if (existingUser == null) return null;
-            
+        
+            // Validar email único
             if (existingUser.Email.Value != userUpdateDto.Email)
             {
                 var emailVo = new Email(userUpdateDto.Email);
                 var userWithSameEmail = await _userRepository.GetUserByEmailAsync(emailVo);
                 if (userWithSameEmail != null && userWithSameEmail.Id != userId)
                     throw new InvalidOperationException("El email ya está en uso");
-                
+            
                 existingUser.ChangeEmail(userUpdateDto.Email);
             }
-            
+        
+            // Validar username único
             if (existingUser.UserName != userUpdateDto.UserName)
             {
                 var userWithSameUsername = await _userRepository.GetUserByUserNameAsync(userUpdateDto.UserName);
-                 if (userWithSameUsername != null && userWithSameUsername.Id != userId)
-                    throw new InvalidOperationException("El usuario ya está en uso");
+                if (userWithSameUsername != null && userWithSameUsername.Id != userId)
+                    throw new InvalidOperationException("El nombre de usuario ya está en uso");
             }
-            
-            existingUser.UpdateUser(userUpdateDto.Name, userUpdateDto.LastName, userUpdateDto.UserName);
-            
+        
+            // Actualizar datos básicos
+            existingUser.UpdateUser(
+                userUpdateDto.Name, 
+                userUpdateDto.LastName, 
+                userUpdateDto.UserName
+            );
+        
+            // Cambiar contraseña si se proporciona
             if (!string.IsNullOrEmpty(userUpdateDto.Password))
             {
                 existingUser.ChangePassword(HashPassword(userUpdateDto.Password));
             }
-            
+        
             var updatedUser = await _userRepository.UpdateUserAsync(existingUser, userId);
             return updatedUser == null ? null : MapToUserResponseDto(updatedUser);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al actualizar usuario");
+            _logger.LogError(ex, "Error al actualizar usuario {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<UserResponseDto>> GetDeletedUsersAsync()
+    {
+        try
+        {
+            var users = await _userRepository.GetDeletedUsersAsync();
+            return users.Select(MapToUserResponseDto);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error al obtener los usuarios eliminados");
             throw;
         }
     }
@@ -280,8 +297,7 @@ public class UserService : IUserService
             throw;
         }
     }
-
-    //TODO Refactorizar este metodo para que no sea tan largo para mejorar aplicando buenas practicas
+    
     public async Task<(string NewAccessToken, string NewRefreshToken)> RefreshTokenAsync(string accessToken, string refreshToken)
     {
         try
@@ -299,15 +315,7 @@ public class UserService : IUserService
             }
             else
             {
-                // Si falla el GUID intentamos por email (fallback de tu lógica original)
-                // Pero recuerda convertir el string a Email VO
-                //TODO refactorizar esto para que sea mas estandar
-                try {
-                    var emailVo = new Email(userIdClaim);
-                    user = await _userRepository.GetUserByEmailAsync(emailVo);
-                } catch {
-                    user = null;
-                }
+                user = null;
             }
             
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiresDate <= DateTime.UtcNow)

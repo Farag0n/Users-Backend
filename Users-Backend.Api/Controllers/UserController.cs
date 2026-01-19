@@ -19,8 +19,7 @@ public class UserController : ControllerBase
         _userService = userService;
         _logger = logger;
     }
-
-    // GET: api/User
+    
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAll()
@@ -36,8 +35,7 @@ public class UserController : ControllerBase
             return StatusCode(500, "Error interno del servidor");
         }
     }
-
-    // GET: api/User/{id}
+    
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -45,9 +43,9 @@ public class UserController : ControllerBase
         var currentUserId = GetCurrentUserId();
         if (!User.IsInRole("Admin") && currentUserId != id)
         {
-            return Forbid();//TODO ponerle un authorize
+            return Forbid();
         }
-
+        
         try
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -60,8 +58,7 @@ public class UserController : ControllerBase
             return BadRequest(new { Message = ex.Message });
         }
     }
-
-    // GET: api/User/username/{username}
+    
     [HttpGet("username/{username}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetByUserName(string username)
@@ -80,8 +77,7 @@ public class UserController : ControllerBase
             return BadRequest(new { Message = ex.Message });
         }
     }
-
-    // GET: api/User/email/{email}
+    
     [HttpGet("email/{email}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetByEmail(string email)
@@ -97,17 +93,14 @@ public class UserController : ControllerBase
             return BadRequest(new { Message = ex.Message });
         }
     }
-
-    // POST: api/User
-    // Este método permite a un ADMIN crear un usuario manualmente.
-    // Reutilizamos UserRegisterDto porque contiene todos los datos necesarios (pass, nombre, rol, etc.)
+    
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] UserRegisterDto registerDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
+        
         try
         {
             // Usamos CreateUserAsync (que devuelve UserResponseDto) en lugar de RegisterAsync (que devuelve Tokens)
@@ -115,7 +108,7 @@ public class UserController : ControllerBase
             
             return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
         }
-        catch (InvalidOperationException ex) // Ej: Email duplicado
+        catch (InvalidOperationException ex)
         {
             return Conflict(new { Message = ex.Message });
         }
@@ -125,25 +118,26 @@ public class UserController : ControllerBase
             return BadRequest(new { Message = ex.Message });
         }
     }
-
-    // PUT: api/User/{id}
+    
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UserUpdateDto userUpdateDto)
     {
-        if (id != userUpdateDto.Id)
-            return BadRequest(new { Message = "El ID de la URL no coincide con el cuerpo" });
-
+        // Validación del modelo
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+    
         // Seguridad: Solo Admin o el mismo usuario pueden editar
         var currentUserId = GetCurrentUserId();
-        if (!User.IsInRole("Admin") && currentUserId != id)
-        {
+        var isAdmin = User.IsInRole("Admin");
+    
+        if (!isAdmin && currentUserId != id)
             return Forbid();
-        }
 
         try
         {
-            var updatedUser = await _userService.UpdateUserAsync(userUpdateDto);
-            if (updatedUser == null) return NotFound(new { Message = "Usuario no encontrado" });
+            var updatedUser = await _userService.UpdateUserAsync(id, userUpdateDto);
+            if (updatedUser == null) 
+                return NotFound(new { Message = "Usuario no encontrado" });
 
             return Ok(updatedUser);
         }
@@ -153,10 +147,11 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(new { Message = ex.Message });
+            _logger.LogError(ex, "Error actualizando usuario {Id}", id);
+            return StatusCode(500, new { Message = "Error interno al actualizar el usuario" });
         }
     }
-
+    
     // DELETE: api/User/{id}
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = "Admin")]

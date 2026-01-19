@@ -50,36 +50,32 @@ public class UserConfigurations :  IEntityTypeConfiguration<User>
         builder.Property(u => u.RefreshToken)
             .HasMaxLength(500);
         
-        //datos inicales (seed Data)
-        //Se debe inciar una pasword hasheada
-        //Se inseta informacion de testeo al crear la db
-        //Es muy util en desarrollo pero no es correcto en produccion
-        // builder.HasData(
-        // new
-        // {
-        //     Id = Guid.Parse("d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a"),
-        //     Name = "Test",
-        //     LastName = "Admin",
-        //     Email = new Email("admin@qwe.com"),
-        //     UserName = "Admin",
-        //     PasswordHash = "123",
-        //     UserRole = UserRole.Admin,
-        //     CreateAt = DateTime.UtcNow,
-        //     IsDeleted = false,
-        //     RefreshTokenExpiresDate = DateTime.MinValue
-        // },
-        // new
-        // {
-        //     Id = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
-        //     Name = "Test",
-        //     LastName = "User",
-        //     Email = new Email("user@qwe.com"),
-        //     UserName = "user",
-        //     PasswordHash = "123",
-        //     UserRole = UserRole.User,
-        //     CreateAt = DateTime.UtcNow,
-        //     IsDeleted = false,
-        //     RefreshTokenExpiresDate = DateTime.MinValue
-        // });
+         builder.HasData(
+         new
+         {
+             Id = Guid.Parse("d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a"),
+             Name = "Test",
+             LastName = "Admin",
+             Email = new Email("admin@qwe.com"),
+             UserName = "admin",
+             PasswordHash = "76ac3775bbadd88096d4aacef1ca7ac325fd1303dfac8f12d4462b3288cc5141\n",//pasword sin hashear: Adminqwe.123 
+             UserRole = UserRole.Admin,
+             CreateAt = DateTime.UtcNow,
+             IsDeleted = false,
+             RefreshTokenExpiresDate = DateTime.MinValue
+         },
+         new
+         {
+             Id = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
+             Name = "Test",
+             LastName = "User",
+             Email = new Email("user@qwe.com"),
+             UserName = "user",
+             PasswordHash = "086736616e598710e984506abb07bb54d9f382103f145c9f1206247c2a61879d\n",//pasword sin hashear: Userqwe.123
+             UserRole = UserRole.User,
+             CreateAt = DateTime.UtcNow,
+             IsDeleted = false,
+             RefreshTokenExpiresDate = DateTime.MinValue
+         });
     }
 }
