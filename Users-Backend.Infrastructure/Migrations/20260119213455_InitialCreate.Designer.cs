@@ -12,8 +12,8 @@ using Users_Backend.Infrastructure.Data;
 namespace Users_Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260119032233_Migration3")]
-    partial class Migration3
+    [Migration("20260119213455_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,7 +81,7 @@ namespace Users_Backend.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a"),
-                            CreateAt = new DateTime(2026, 1, 19, 3, 22, 32, 716, DateTimeKind.Utc).AddTicks(5752),
+                            CreateAt = new DateTime(2026, 1, 19, 21, 34, 54, 64, DateTimeKind.Utc).AddTicks(3555),
                             Email = "admin@qwe.com",
                             IsDeleted = false,
                             LastName = "Admin",
@@ -94,7 +94,7 @@ namespace Users_Backend.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
-                            CreateAt = new DateTime(2026, 1, 19, 3, 22, 32, 716, DateTimeKind.Utc).AddTicks(6367),
+                            CreateAt = new DateTime(2026, 1, 19, 21, 34, 54, 64, DateTimeKind.Utc).AddTicks(5330),
                             Email = "user@qwe.com",
                             IsDeleted = false,
                             LastName = "User",

@@ -27,6 +27,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<TokenService>();
 
 
+
 // ===================== JWT Configuration =====================
 //Configures the authentication system to validate JWT tokens on HTTP requests.
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -126,8 +127,8 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Real Estate API v1");
-        options.RoutePrefix = string.Empty; // Swagger en /
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Users Management API v1");
+        options.RoutePrefix = string.Empty;
     });
 }
 

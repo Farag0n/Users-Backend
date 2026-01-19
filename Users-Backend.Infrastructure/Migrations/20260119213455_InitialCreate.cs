@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Users_Backend.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -45,7 +47,11 @@ namespace Users_Backend.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreateAt", "Email", "IsDeleted", "LastName", "Name", "PasswordHash", "RefreshToken", "RefreshTokenExpiresDate", "UserName", "UserRole" },
-                values: new object[] { new Guid("d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a"), new DateTime(2026, 1, 13, 9, 43, 24, 47, DateTimeKind.Utc).AddTicks(6458), "test@qwe.com", false, "User", "Test", "123", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "test", 0 });
+                values: new object[,]
+                {
+                    { new Guid("a1b2c3d4-e5f6-7890-abcd-ef1234567890"), new DateTime(2026, 1, 19, 21, 34, 54, 64, DateTimeKind.Utc).AddTicks(5330), "user@qwe.com", false, "User", "Test", "086736616e598710e984506abb07bb54d9f382103f145c9f1206247c2a61879d\n", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user", 1 },
+                    { new Guid("d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a"), new DateTime(2026, 1, 19, 21, 34, 54, 64, DateTimeKind.Utc).AddTicks(3555), "admin@qwe.com", false, "Admin", "Test", "76ac3775bbadd88096d4aacef1ca7ac325fd1303dfac8f12d4462b3288cc5141\n", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", 0 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UserName",

@@ -17,7 +17,5 @@ public class UserRegisterDto
     [Required]
     public string Password { get; set; } = string.Empty;
     [Required]
-    public string ConfirmPassword { get; set; } = string.Empty;
-    [Required]
     public UserRole Role { get; set; }
 }

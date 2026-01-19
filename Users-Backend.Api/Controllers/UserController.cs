@@ -59,7 +59,7 @@ public class UserController : ControllerBase
         }
     }
     
-    [HttpGet("username/{username}")]
+    [HttpGet("Username/{username}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetByUserName(string username)
     {
@@ -78,7 +78,7 @@ public class UserController : ControllerBase
         }
     }
     
-    [HttpGet("email/{email}")]
+    [HttpGet("Email/{email}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetByEmail(string email)
     {
@@ -87,6 +87,21 @@ public class UserController : ControllerBase
             var user = await _userService.GetUserByEmailAsync(email);
             if (user == null) return NotFound(new { Message = "Usuario no encontrado" });
             return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
+    [HttpGet("Deleted")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetDeletdUsers()
+    {
+        try
+        {
+            var deletedUsers = await _userService.GetDeletedUsersAsync();
+            return Ok(deletedUsers);
         }
         catch (Exception ex)
         {
@@ -103,7 +118,6 @@ public class UserController : ControllerBase
         
         try
         {
-            // Usamos CreateUserAsync (que devuelve UserResponseDto) en lugar de RegisterAsync (que devuelve Tokens)
             var createdUser = await _userService.CreateUserAsync(registerDto);
             
             return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
@@ -152,7 +166,6 @@ public class UserController : ControllerBase
         }
     }
     
-    // DELETE: api/User/{id}
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
@@ -171,7 +184,6 @@ public class UserController : ControllerBase
         }
     }
     
-    // DELETE: api/User/{id}
     [HttpDelete("SoftDete/{id:guid}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> SoftDelete(Guid id)
